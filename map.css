@@ -1,0 +1,8 @@
+/*html, body { height: 4800px; width: 4800px; margin: 0; padding: 0; }*/
+html, body { margin: 0; padding: 0; }
+
+.wrapper { width: 100%; font-size: 0; text-align: center; }
+#map { height: 900px; width: 100%; }
+.block { margin: 0; padding: 0; min-height: 120px; width: 50%; display: inline-block; color: #222; font-size: 17px; text-align: left; vertical-align: top; }
+#coord { background-color: #AFF; }
+#gpx { background-color: #FFA; display: inline-block; }
