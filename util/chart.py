@@ -92,7 +92,7 @@ def elevationBars(asc=[], desc=[], ax=None):
 
 
 def plotAll(days, asc, desc, title=None):
-    fig, axes = plt.subplots(figsize=(9,9), nrows=3, ncols=1)
+    fig, axes = plt.subplots(figsize=(12,9), nrows=3, ncols=1)
     plotChartPerDay(days, ax=axes[0])
     plotChartTotal(days, ax=axes[1])
     elevationBars(asc, desc, ax=axes[2])

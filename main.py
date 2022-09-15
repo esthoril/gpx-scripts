@@ -4,10 +4,11 @@ import argparse
 def arg_parser():
     parser = argparse.ArgumentParser(description="GPX options")
     parser.add_argument('-d', '--distance', action="store_true", help="Get gpx distance")
-    parser.add_argument('-f', '--format', action="store_true", help="Format GPX file")
+    parser.add_argument('-f', '--format', help="Format GPX file")
     parser.add_argument('-w', '--waypoints', help="Create waypoints file")
     parser.add_argument('-c', '--chart', help="Create elevation chart")
-    parser.add_argument('-t', '--title', help="Output title")
+    parser.add_argument('-t', '--title', help="Chart title")
+    parser.add_argument('-i', '--input', help="Input file")
     return parser
 
 def main():
@@ -36,22 +37,23 @@ if __name__ == "__main__":
         for day in days:
             g = calc.elevation(day)
             l = calc.elevation(day, up=False)
-            asc.append(g)
-            desc.append(l)
+            #asc.append(g)
+            #desc.append(l)
         chart.plotAll(days, asc, desc, title=args.title)
 
-
     if args.format:
-        output = open('output/output.gpx', "w", encoding='UTF-8')
-        input = open('output/tmp.gpx', "r", encoding='UTF-8')
-        #format.cleanGPX1(input, output)  # rtept to trkpt
-        #format.cleanGPX3(input, output)
-        format.cleanGPX4(input, output)
-        #createGPX(input, output)
-        #createGPX2(input, output)
-        #removeEle(input, output)
-        #format.removeTime(input, output)
-        #reverse(input, output)
+        if args.input is None:
+            print("Please provide --input file")
+        else:
+            output = open('output/output.gpx', "w", encoding='UTF-8')
+            input = open(args.input, "r", encoding='UTF-8')
 
-        input.close()
-        output.close()
+            if args.format == "traildino":
+                format.traildino(input, output)
+            elif args.format == "mapy":
+                format.mapycz(input, output)
+            else:
+                print("Unknown format")
+
+            input.close()
+            output.close()

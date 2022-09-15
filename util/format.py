@@ -1,5 +1,67 @@
 import sys
 
+
+def traildino(input, output):
+    def metadata():
+        return '''<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" creator="http://www.traildino.com" version="1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+<metadata>
+  <copyright author="OpenStreetMap and Contributors">
+    <license>http://www.opendatacommons.org/licenses/odbl/</license>
+  </copyright>
+  <link href="http://www.traildino.com"></link>
+</metadata>\n'''
+
+    def cleanSection(section):
+        str = '<trk>\n'
+        points = section.split('<trkpt ')
+        str += f'  {points[0][:-len("<trkseg>")]}\n' # Whatever comes before first data point
+        str += '  <trkseg>\n'
+        for p in points[1:]:
+            str += f'    <trkpt {p}\n'
+        str += '  </trkseg>\n'
+        str += '</trk>\n'
+        return str
+
+    for line in input: # Should be only a single line in files from Traildino.com
+        parts = line.split('<trk>')
+        data = '<trk>' + ''.join(parts[1:])[:-len('</gpx>')] # All <trk></trk> sections
+
+        sections = data.split('<trk>')[1:]
+        [s[:-len('</trkseg></trk>')] for s in sections]
+
+        #output.write(f'{parts[0]}\n')
+        output.write(metadata())
+        for s in sections:
+            output.write(cleanSection(s))
+        output.write('</gpx>\n')
+
+
+def mapycz(input, output):
+    '''
+    Move <trkpt> and <ele> to single line
+
+    <trkpt lat="49.797484875" lon="5.070662498">
+      <ele>232.23</ele>
+    </trkpt>
+
+    <trkpt lat="49.797484875" lon="5.070662498"><ele>232.23</ele></trkpt>
+    '''
+    point = ""
+    for line in input:
+        line_ = line.strip()
+        if line_.startswith("<trkpt"):
+            point += f"    {line_}"
+        elif line_.startswith("<ele>"):
+            point += line_
+        elif line_ == "</trkpt>":
+            point += f"{line_}\n"
+            output.write(point)
+            point = ""
+        else:
+            output.write(f"{line_}\n")
+
+
 def cleanGPX1(input, output):
     for line in input:
         parts = line.split('/>')
